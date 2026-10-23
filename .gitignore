@@ -1,0 +1,21 @@
+# C++ build
+build/
+
+# Virtual disk (created by Module 7)
+data/
+*.bin
+
+# Web
+web/node_modules/
+web/.next/
+web/out/
+
+# OS / IDE
+.DS_Store
+.idea/
+*.swp
+*.swo
+
+# Env (no secrets in repo)
+.env
+.env.*
