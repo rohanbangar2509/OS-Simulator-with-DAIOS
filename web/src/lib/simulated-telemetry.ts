@@ -1,8 +1,16 @@
 import type { ProcessControlBlock, ScheduleResult } from "@/lib/types";
 
-export const DAIOS_TELEMETRY_VERSION = "1.1";
+export const DAIOS_TELEMETRY_VERSION = "1.2";
 
 export type SimulatedWorkloadClass = "CPU_BOUND" | "MIXED" | "LIGHTWEIGHT";
+
+export interface PolicyTimelineSummary {
+  algorithm: string;
+  busySimulationTime: number;
+  idleSimulationTime: number;
+  elapsedSimulationTime: number;
+  simulatedCpuUtilization: number;
+}
 
 export interface SimulatedTelemetrySnapshot {
   schemaVersion: string;
@@ -25,6 +33,8 @@ export interface SimulatedTelemetrySnapshot {
     algorithm: string;
     timeQuantum: number | null;
   };
+  /** Per-policy timeline metrics, calculated from each scheduler's own Gantt segments. */
+  policyComparison: PolicyTimelineSummary[];
   metrics: {
     simulatedCpuUtilization: number;
     averageWaitingTime: number;
@@ -57,6 +67,9 @@ export interface PolicyCandidate {
   avgResponseTime: number;
   cpuUtilization: number;
   throughput: number;
+  busySimulationTime?: number;
+  idleSimulationTime?: number;
+  elapsedSimulationTime?: number;
 }
 
 export interface CaptureTelemetryInput {
@@ -164,6 +177,15 @@ function normalizeSnapshot(value: unknown): SimulatedTelemetrySnapshot | null {
   return {
     ...(snapshot as SimulatedTelemetrySnapshot),
     schemaVersion: snapshot.schemaVersion ?? "1.0",
+    policyComparison: Array.isArray(snapshot.policyComparison)
+      ? snapshot.policyComparison.map((item) => ({
+          algorithm: String(item.algorithm ?? "Unknown"),
+          busySimulationTime: Number(item.busySimulationTime ?? 0),
+          idleSimulationTime: Number(item.idleSimulationTime ?? 0),
+          elapsedSimulationTime: Number(item.elapsedSimulationTime ?? 0),
+          simulatedCpuUtilization: Number(item.simulatedCpuUtilization ?? 0),
+        }))
+      : [],
     metrics: {
       ...metrics,
       simulatedCpuUtilization: Number(metrics.simulatedCpuUtilization ?? utilization),
@@ -212,6 +234,7 @@ export function exportSimulatedTelemetryCsv(snapshots: SimulatedTelemetrySnapsho
     "average_response_time", "throughput", "cpu_busy_time", "cpu_idle_time",
     "elapsed_simulation_time", "workload_class", "classification_method",
     "classification_explanation", "optimization_objective", "recommended_policy", "recommendation_basis",
+    "policy_timeline_comparison",
   ];
 
   const escapeCsv = (value: unknown): string => {
@@ -235,6 +258,7 @@ export function exportSimulatedTelemetryCsv(snapshots: SimulatedTelemetrySnapsho
       snapshot.understanding.workloadClass, snapshot.understanding.confidence,
       snapshot.understanding.explanation, snapshot.recommendation.objective,
       snapshot.recommendation.selectedPolicy, snapshot.recommendation.basis,
+      JSON.stringify(snapshot.policyComparison ?? []),
     ];
     return values.map(escapeCsv).join(",");
   });
@@ -294,6 +318,18 @@ export function createSimulatedTelemetry(input: CaptureTelemetryInput): Simulate
       algorithm: result.algorithmName,
       timeQuantum: result.algorithmName.startsWith("Round Robin") ? timeQuantum : null,
     },
+    policyComparison: policies.map((policy) => ({
+      algorithm: policy.algorithmName,
+      busySimulationTime: round(policy.busySimulationTime ?? 0),
+      idleSimulationTime: round(policy.idleSimulationTime ?? 0),
+      elapsedSimulationTime: round(policy.elapsedSimulationTime ?? 0),
+      simulatedCpuUtilization: round(
+        policy.elapsedSimulationTime && policy.elapsedSimulationTime > 0
+          ? ((policy.busySimulationTime ?? 0) / policy.elapsedSimulationTime) * 100
+          : 0,
+        2
+      ),
+    })),
     metrics: {
       simulatedCpuUtilization: round(simulatedCpuUtilization, 2),
       averageWaitingTime: round(result.avgWaitingTime),

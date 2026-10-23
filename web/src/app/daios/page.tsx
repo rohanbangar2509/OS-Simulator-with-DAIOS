@@ -298,14 +298,20 @@ export default function DAIOSPage() {
       const snapshot = createSimulatedTelemetry({
         processes,
         result,
-        policies: policyResults.map((policy) => ({
-          algorithmName: policy.algorithmName,
-          avgWaitingTime: policy.avgWaitingTime,
-          avgTurnaroundTime: policy.avgTurnaroundTime,
-          avgResponseTime: policy.avgResponseTime,
-          cpuUtilization: policy.cpuUtilization,
-          throughput: policy.throughput,
-        })),
+        policies: policyResults.map((policy) => {
+          const policyTimeline = analyzeTimeline(policy.gantt);
+          return {
+            algorithmName: policy.algorithmName,
+            avgWaitingTime: policy.avgWaitingTime,
+            avgTurnaroundTime: policy.avgTurnaroundTime,
+            avgResponseTime: policy.avgResponseTime,
+            cpuUtilization: policyTimeline.cpuUtilization,
+            throughput: policy.throughput,
+            busySimulationTime: policyTimeline.busyTime,
+            idleSimulationTime: policyTimeline.idleTime,
+            elapsedSimulationTime: policyTimeline.elapsedTime,
+          };
+        }),
         objective,
         timeQuantum: quantum,
       });
@@ -330,7 +336,7 @@ export default function DAIOSPage() {
     <div className="mx-auto max-w-6xl space-y-6 p-6">
       <header>
         <p className="text-sm font-semibold uppercase tracking-widest text-primary">
-          DAIOS · Prototype 0.4
+          DAIOS · Prototype 0.5
         </p>
         <h1 className="mt-2 text-3xl font-bold">Data-Aware Operating System</h1>
         <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
@@ -475,7 +481,7 @@ export default function DAIOSPage() {
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">Observe · Compare · Recommend</p>
               <h2 className="mt-1 text-lg font-semibold">DAIOS Policy Advisor</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Evaluate all five scheduling policies against the same workload and rank them by the selected objective.
+                Evaluate all five policies on the same workload. Timeline metrics are recalculated from each policy’s own Gantt segments.
               </p>
             </div>
 
@@ -514,7 +520,7 @@ export default function DAIOSPage() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-muted">
                   <tr>
-                    {["Rank", "Policy", "Avg wait", "Avg response", "Avg turnaround", "CPU utilization", "Throughput", "Objective score"].map((heading) => (
+                    {["Rank", "Policy", "Avg wait", "Avg response", "Avg turnaround", "Busy time", "Idle time", "Elapsed", "CPU utilization", "Throughput", "Objective score"].map((heading) => (
                       <th key={heading} className="whitespace-nowrap px-3 py-3">{heading}</th>
                     ))}
                   </tr>
@@ -529,7 +535,10 @@ export default function DAIOSPage() {
                       <td className="px-3 py-3">{policy.avgWaitingTime.toFixed(2)}</td>
                       <td className="px-3 py-3">{policy.avgResponseTime.toFixed(2)}</td>
                       <td className="px-3 py-3">{policy.avgTurnaroundTime.toFixed(2)}</td>
-                      <td className="px-3 py-3">{policy.cpuUtilization.toFixed(1)}%</td>
+                      <td className="px-3 py-3">{analyzeTimeline(policy.gantt).busyTime.toFixed(2)}</td>
+                      <td className="px-3 py-3">{analyzeTimeline(policy.gantt).idleTime.toFixed(2)}</td>
+                      <td className="px-3 py-3">{analyzeTimeline(policy.gantt).elapsedTime.toFixed(2)}</td>
+                      <td className="px-3 py-3">{analyzeTimeline(policy.gantt).cpuUtilization.toFixed(1)}%</td>
                       <td className="px-3 py-3">{policy.throughput.toFixed(3)}</td>
                       <td className="px-3 py-3 font-mono font-semibold">{formatObjectiveValue(policy, objective)}</td>
                     </tr>
