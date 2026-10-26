@@ -2,7 +2,6 @@
 
 An interactive educational Operating Systems laboratory built with **Next.js, TypeScript, React, and Tailwind CSS**, alongside a **C++17 terminal simulator**. Explore classic OS concepts through interactive simulations, visualizations, sample scenarios, and learning guides.
 
-**GitHub Repository:** https://github.com/rohanbangar2509/OS-Simulator-with-DAIOS
 
 > **Note:** This is an educational user-level simulator, not a real operating-system kernel. DAIOS Intelligence analyzes simulated workloads. Its current workload classifications are rule-based, not machine-learning predictions, and it does not collect physical-device telemetry.
 
