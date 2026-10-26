@@ -3,6 +3,7 @@ import { useState, useMemo } from "react";
 import { runFIFO, runLRU, runOptimal, runClock, sampleRefs } from "@/lib/vmem";
 import { ReplacementResult } from "@/lib/types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { LearningGuide } from "@/components/LearningGuide";
 
 function PageTable({ result }: { result: ReplacementResult }) {
   const first = result.frameSnapshots[0];
@@ -65,6 +66,7 @@ export default function VmemPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">Virtual Memory Simulator</h1>
+      <LearningGuide module="vmem" />
 
       <div className="flex flex-wrap gap-3 items-end">
         <label className="space-y-1 flex-1 min-w-[200px]"><span className="text-xs text-muted-foreground">Reference String (comma-separated)</span>

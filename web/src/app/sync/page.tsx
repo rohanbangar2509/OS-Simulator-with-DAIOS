@@ -2,6 +2,7 @@
 import { useState, useRef, useCallback } from "react";
 import { LogEntry } from "@/lib/types";
 import { runProducerConsumer, runReadersWriters, runDiningPhilosophers, runSleepingBarber } from "@/lib/sync";
+import { LearningGuide } from "@/components/LearningGuide";
 
 const TAG_COLORS: Record<string, string> = {
   System: "text-blue-400",
@@ -94,6 +95,7 @@ export default function SyncPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">Synchronization Playground</h1>
+      <LearningGuide module="sync" />
 
       <div className="flex gap-1 border-b border-border">
         {PROBLEMS.map(p => (

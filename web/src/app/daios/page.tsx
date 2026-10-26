@@ -10,6 +10,7 @@ import {
 } from "@/lib/scheduler";
 import type { ProcessControlBlock, ScheduleResult } from "@/lib/types";
 import { useWorkload } from "@/lib/workload-context";
+import { LearningGuide } from "@/components/LearningGuide";
 import {
   clearSimulatedTelemetry,
   createSimulatedTelemetry,
@@ -354,6 +355,8 @@ export default function DAIOSPage() {
           not ML predictions.
         </p>
       </div>
+
+      <LearningGuide module="daios" />
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Shared workload</h2>

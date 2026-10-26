@@ -2,6 +2,7 @@
 import { useState, Fragment } from "react";
 import { ProcessControlBlock, ProcessState, LogEntry } from "@/lib/types";
 import { createProcess, makeThread, transitionProcess, nextPid, nextTid } from "@/lib/process";
+import { LearningGuide } from "@/components/LearningGuide";
 
 const STATE_COLORS: Record<ProcessState, string> = {
   [ProcessState.NEW]: "bg-blue-500",
@@ -83,6 +84,7 @@ export default function ProcessPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">Process & Thread Simulator</h1>
+      <LearningGuide module="process" />
 
       <div className="flex flex-wrap gap-3 items-end">
         {([["Burst", "burst", 1], ["Priority", "priority", 0], ["Arrival", "arrival", 0], ["Memory", "memory", 1]] as const).map(([label, key, min]) => (

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useMemo } from "react";
 import { MemoryBlock } from "@/lib/types";
+import { LearningGuide } from "@/components/LearningGuide";
 import {
   createMemory, allocateFirstFit, allocateBestFit, allocateWorstFit,
   deallocate, compact, externalFragmentation, totalFree,
@@ -146,6 +147,7 @@ export default function MemoryPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">Memory Management</h1>
+      <LearningGuide module="memory" />
 
       <div className="flex flex-wrap gap-3 items-end">
         <label className="space-y-1"><span className="text-xs text-muted-foreground">Size</span>

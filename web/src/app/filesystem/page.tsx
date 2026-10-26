@@ -3,6 +3,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { MiniFS, FsEntry } from "@/lib/filesystem";
 import { analyzeIO, resolvePosition, OPERATIONS, IOResult, Operation, AnalysisConfig, DEFAULT_CONFIG } from "@/lib/fs-io-cost";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LearningGuide } from "@/components/LearningGuide";
 
 function FileTree({ entry, depth = 0 }: { entry: FsEntry; depth?: number }) {
   const [open, setOpen] = useState(depth < 2);
@@ -234,6 +235,7 @@ export default function FilesystemPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-4">
       <h1 className="text-3xl font-bold">Mini File System</h1>
+      <LearningGuide module="filesystem" />
 
       <div className="flex gap-1 border-b border-border">
         <button onClick={() => setTab("terminal")}

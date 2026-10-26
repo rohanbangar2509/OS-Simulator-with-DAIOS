@@ -4,6 +4,7 @@ import { ProcessControlBlock, ScheduleResult, createPCB } from "@/lib/types";
 import { useWorkload } from "@/lib/workload-context";
 import { runFCFS, runSJF, runRoundRobin, runPriority, runMLFQ } from "@/lib/scheduler";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LearningGuide } from "@/components/LearningGuide";
 
 const ALGO_NAMES = ["FCFS", "SJF", "Round Robin", "Priority", "MLFQ"];
 const COLORS = ["#3b82f6", "#ef4444", "#22c55e", "#f59e0b", "#a855f7", "#ec4899", "#14b8a6", "#f97316"];
@@ -59,6 +60,7 @@ export default function SchedulerPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold">CPU Scheduling Laboratory</h1>
+      <LearningGuide module="scheduler" />
 
       <div className="flex flex-wrap gap-3 items-end">
         <label className="space-y-1"><span className="text-xs text-muted-foreground">Burst</span>
